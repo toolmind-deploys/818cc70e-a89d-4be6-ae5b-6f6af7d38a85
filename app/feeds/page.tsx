@@ -23,9 +23,9 @@ export default async function FeedsPage() {
       {Array.isArray(feeds) && feeds.length > 0 ? (
         <ul className="list-disc list-inside">
           {feeds.map((feed: any) => (
-            <li key={feed.id} className="mb-2">
-              <div className="font-semibold">{feed.title}</div>
-              <div className="text-sm text-gray-600">{feed.company}</div>
+            <li key={feed.id} className="mb-3">
+              <div className="font-semibold">{feed.title} – {feed.company}</div>
+              <p className="text-sm text-gray-600">Feed Type: {feed.feedType}</p>
             </li>
           ))}
         </ul>
