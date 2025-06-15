@@ -24,13 +24,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Construct a new feed object. We rely on the body fields to match our "feeds" schema.
-    // Use existing id if provided, else auto-generate a new doc ID.
+    // Construct a new feed object. We rely on the body fields to match our 'feeds' schema.
+    // Check if body.id is provided or let Firestore auto-generate.
     const newFeedId = body.id || undefined;
-    const timestamp = Date.now();
+    const nowTimestamp = Date.now();
 
     const newFeed = {
-      // Required fields from the feed schema. Adjust as needed.
       uid: body.uid || "",
       title: body.title || "",
       views: body.views || [],
@@ -40,23 +39,23 @@ export async function POST(request: NextRequest) {
       jobType: body.jobType || "",
       feedType: body.feedType || "",
       community: body.community || "",
-      createdAt: body.createdAt || timestamp,
+      createdAt: body.createdAt || nowTimestamp,
       reactions: body.reactions || {},
-      updatedAt: body.updatedAt || timestamp,
+      updatedAt: body.updatedAt || nowTimestamp,
       employType: body.employType || "",
       description: body.description || "",
       inappropriate: body.inappropriate || false,
       problemToImages: body.problemToImages || {},
-      // If you have extra fields, spread them
+      // Include other fields from the request payload if needed
       ...body
     };
 
     if (newFeedId) {
-      // Set doc using a provided ID
+      // If an ID was supplied, use it
       await fsdb.collection("feeds").doc(newFeedId).set(newFeed);
       return NextResponse.json({ id: newFeedId, ...newFeed });
     } else {
-      // Otherwise let Firestore auto-generate the doc ID
+      // Else auto-generate
       const docRef = await fsdb.collection("feeds").add(newFeed);
       return NextResponse.json({ id: docRef.id, ...newFeed });
     }
