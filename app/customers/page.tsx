@@ -1,15 +1,15 @@
 import React from "react";
 
 export default async function CustomersPage() {
-  // Fetch customers created today from our API route
-  const res = await fetch("/api/customers?createdToday=true", {
+  // Fetch first 5 customers from our API route
+  const res = await fetch("/api/customers?limit=5", {
     cache: "no-store",
   });
 
   if (!res.ok) {
     return (
       <div className="p-4">
-        <h1 className="text-xl font-bold">Today's Customers</h1>
+        <h1 className="text-xl font-bold">Customers</h1>
         <p className="text-red-500">Failed to load customers.</p>
       </div>
     );
@@ -19,7 +19,7 @@ export default async function CustomersPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Today's Customers</h1>
+      <h1 className="text-xl font-bold mb-4">First 5 Customers</h1>
       {Array.isArray(customers) && customers.length > 0 ? (
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
@@ -27,7 +27,7 @@ export default async function CustomersPage() {
               <th className="py-2 px-4 border-b">ID</th>
               <th className="py-2 px-4 border-b">Email</th>
               <th className="py-2 px-4 border-b">Stripe ID</th>
-              <th className="py-2 px-4 border-b">Num Free Submissions</th>
+              <th className="py-2 px-4 border-b">Free Submissions</th>
               <th className="py-2 px-4 border-b">Stripe Link</th>
             </tr>
           </thead>
@@ -39,21 +39,25 @@ export default async function CustomersPage() {
                 <td className="py-2 px-4 border-b">{customer.stripeId}</td>
                 <td className="py-2 px-4 border-b">{customer.num_free_submissions}</td>
                 <td className="py-2 px-4 border-b">
-                  <a
-                    className="text-blue-600 underline"
-                    href={customer.stripeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View in Stripe
-                  </a>
+                  {customer.stripeLink ? (
+                    <a
+                      className="text-blue-600 underline"
+                      href={customer.stripeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View in Stripe
+                    </a>
+                  ) : (
+                    "N/A"
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>No customers found for today.</p>
+        <p>No customers found.</p>
       )}
     </div>
   );
